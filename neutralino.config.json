@@ -1,0 +1,40 @@
+{
+  "applicationId": "js.neutralino.vitetsreact",
+  "version": "1.0.0",
+  "defaultMode": "window",
+  "documentRoot": "/vite-src/dist/",
+  "url": "/",
+  "port": 3000,
+  "enableServer": true,
+  "enableNativeAPI": true,
+  "nativeAllowList": [
+    "app.*",
+    "filesystem.readDirectory"
+  ],
+  "singlePageServe": true,
+  "modes": {
+    "window": {
+      "title": "devpocket",
+      "width": 800,
+      "height": 600,
+      "minWidth": 800,
+      "minHeight": 600,
+      "icon": "/vite-src/public/neutralino.png",
+      "enableInspector": false
+    }
+  },
+  "cli": {
+    "binaryName": "devpocket",
+    "resourcesPath": "/vite-src/dist/",
+    "extensionsPath": "/extensions/",
+    "frontendLibrary": {
+      "patchFile": "/vite-src/index.html",
+      "devUrl": "http://localhost:5173",
+      "projectPath": "/vite-src/",
+      "initCommand": "npm install",
+      "devCommand": "npm run dev",
+      "buildCommand": "npm run build"
+    },
+    "binaryVersion": "6.10.0"
+  }
+}
