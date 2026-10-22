@@ -1,85 +1,165 @@
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
-  ArrowLeftRight,
-  Binary,
-  Braces,
-  ChevronDown,
-  Code2,
-  FileJson,
+  Box,
+  TextField,
+  InputAdornment,
+  Typography,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  Tooltip,
+  IconButton,
+} from "@mui/material";
+
+import {
   Search,
-  type LucideIcon,
-} from "lucide-react";
+  KeyboardArrowDown,
+  KeyboardArrowRight,
+  Terminal,
+  Settings,
+  DarkMode,
+  LightMode,
+} from "@mui/icons-material";
 
-import { categories, tools } from "../data/tools";
+import { categories, tools, type ToolId } from "../data/tools";
 
-type SidebarProps = {
+type ThemeMode = "dark" | "light";
+
+interface SidebarProps {
   activeTool: string;
-  onSelectTool: (id: string) => void;
-};
-
-const icons: Record<string, LucideIcon> = {
-  "arrow-left-right": ArrowLeftRight,
-  binary: Binary,
-  braces: Braces,
-  "file-json": FileJson,
-};
+  onSelectTool: (toolId: string) => void;
+  mode: ThemeMode;
+  onToggleTheme: () => void;
+}
 
 export default function Sidebar({
   activeTool,
   onSelectTool,
+  mode,
+  onToggleTheme,
 }: SidebarProps) {
-  const [query, setQuery] = useState("");
-  const [collapsed, setCollapsed] = useState<string[]>([]);
+  const [search, setSearch] = useState("");
+  const [expanded, setExpanded] = useState<string[]>([
+    "converters",
+    "formatters",
+  ]);
 
-  const normalizedQuery = query.trim().toLowerCase();
+  const filteredTools = useMemo(() => {
+    const query = search.trim().toLowerCase();
 
-  const filteredTools = tools.filter((tool) =>
-    `${tool.name} ${tool.description} ${tool.category}`
-      .toLowerCase()
-      .includes(normalizedQuery),
-  );
+    if (!query) return tools;
 
-  function toggleCategory(id: string) {
-    setCollapsed((current) =>
-      current.includes(id)
-        ? current.filter((item) => item !== id)
-        : [...current, id],
+    return tools.filter(
+      (tool) =>
+        tool.name.toLowerCase().includes(query) ||
+        tool.description.toLowerCase().includes(query),
+    );
+  }, [search]);
+
+  function toggleCategory(categoryId: string) {
+    setExpanded((current) =>
+      current.includes(categoryId)
+        ? current.filter((id) => id !== categoryId)
+        : [...current, categoryId],
     );
   }
 
   return (
-    <aside className="sidebar">
-      <div className="brand">
-        <div className="brand-mark">
-          <Code2 size={20} strokeWidth={2.2} />
-        </div>
+    <Box
+      component="aside"
+      sx={{
+        width: 250,
+        minWidth: 250,
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        bgcolor: "background.paper",
+        borderRight: 1,
+        borderColor: "divider",
+      }}
+    >
+      {/* Brand */}
+      <Box sx={{ px: 2.25, pt: 2.25, pb: 2 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.25 }}>
+          <Box
+            sx={{
+              width: 36,
+              height: 36,
+              display: "grid",
+              placeItems: "center",
+              borderRadius: 2.5,
+              bgcolor: "primary.main",
+              color: "primary.contrastText",
+              flexShrink: 0,
+            }}
+          >
+            <Terminal fontSize="small" />
+          </Box>
 
-        <div className="brand-text">
-          <strong>DevPocket</strong>
-          <span>Developer utilities</span>
-        </div>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography
+              sx={{ fontWeight: 750, lineHeight: 1.4, fontSize: 16 }}
+            >
+              DevPocket
+            </Typography>
 
-        <span className="brand-version">0.1</span>
-      </div>
+            <Typography variant="caption" color="text.secondary">
+              Developer toolkit
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
 
-      <div className="sidebar-search">
-        <Search size={15} />
-        <input
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search tools"
-          aria-label="Search tools"
+      {/* Search */}
+      <Box sx={{ px: 1.5, pb: 1.75 }}>
+        <TextField
+          fullWidth
+          size="small"
+          placeholder="Search tools..."
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search
+                    sx={{ fontSize: 18, color: "text.secondary" }}
+                  />
+                </InputAdornment>
+              ),
+            },
+          }}
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              borderRadius: 3,
+              bgcolor: "action.hover",
+              "& fieldset": { borderColor: "transparent" },
+              "&:hover fieldset": { borderColor: "divider" },
+              "&.Mui-focused fieldset": {
+                borderColor: "primary.main",
+              },
+            },
+          }}
         />
-        <kbd>/</kbd>
-      </div>
+      </Box>
 
-      <div className="sidebar-section-heading">
-        <span>TOOLS</span>
-        <span className="tool-total">{filteredTools.length}</span>
-      </div>
+      <Divider />
 
-      <nav className="tool-navigation">
+      {/* Tools */}
+      <Box sx={{ px: 2, pt: 1.75, pb: 0.75 }}>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ fontWeight: 700, letterSpacing: 0.8 }}
+        >
+          TOOLBOX
+        </Typography>
+      </Box>
+
+      <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto", px: 1, pb: 1 }}>
         {categories.map((category) => {
           const categoryTools = filteredTools.filter(
             (tool) => tool.category === category.id,
@@ -87,68 +167,189 @@ export default function Sidebar({
 
           if (categoryTools.length === 0) return null;
 
-          const isCollapsed = collapsed.includes(category.id);
+          const isExpanded =
+            search.trim().length > 0 || expanded.includes(category.id);
 
           return (
-            <section className="nav-category" key={category.id}>
-              <button
-                type="button"
-                className="category-toggle"
+            <Box key={category.id} sx={{ mb: 0.75 }}>
+              <ListItemButton
                 onClick={() => toggleCategory(category.id)}
-                aria-expanded={!isCollapsed}
+                sx={{
+                  minHeight: 34,
+                  px: 1.25,
+                  borderRadius: 2,
+                  color: "text.secondary",
+                }}
               >
-                <span>{category.name}</span>
-                <ChevronDown
-                  size={14}
-                  className={isCollapsed ? "chevron-collapsed" : ""}
-                />
-              </button>
+                {isExpanded ? (
+                  <KeyboardArrowDown sx={{ fontSize: 17, mr: 0.75 }} />
+                ) : (
+                  <KeyboardArrowRight sx={{ fontSize: 17, mr: 0.75 }} />
+                )}
 
-              {!isCollapsed && (
-                <div className="category-tools">
+                <ListItemText
+                  primary={category.name}
+                  slotProps={{
+                    primary: {
+                      sx: { fontSize: 12, fontWeight: 650 },
+                    },
+                  }}
+                />
+
+                <Typography variant="caption" color="text.secondary">
+                  {categoryTools.length}
+                </Typography>
+              </ListItemButton>
+
+              {isExpanded && (
+                <List dense disablePadding sx={{ mt: 0.5 }}>
                   {categoryTools.map((tool) => {
-                    const Icon = icons[tool.icon] ?? Binary;
-                    const isActive = activeTool === tool.id;
+                    const Icon = tool.icon;
+                    const selected = activeTool === tool.id;
 
                     return (
-                      <button
-                        type="button"
+                      <Tooltip
                         key={tool.id}
-                        className={`tool-link ${isActive ? "active" : ""}`}
-                        onClick={() => onSelectTool(tool.id)}
-                        aria-current={isActive ? "page" : undefined}
                         title={tool.description}
+                        placement="right"
+                        enterDelay={700}
                       >
-                        <Icon size={16} strokeWidth={1.8} />
-                        <span>{tool.name}</span>
-                        {isActive && (
-                          <span className="active-indicator" />
-                        )}
-                      </button>
+                        <ListItemButton
+                          selected={selected}
+                          onClick={() => onSelectTool(tool.id as ToolId)}
+                          sx={{
+                            minHeight: 38,
+                            pl: 2,
+                            pr: 1.25,
+                            mb: 0.25,
+                            borderRadius: 2.5,
+                            "&.Mui-selected": {
+                              bgcolor: "primary.main",
+                              color: "primary.contrastText",
+                            },
+                            "&.Mui-selected:hover": {
+                              bgcolor: "primary.main",
+                              filter: "brightness(1.05)",
+                            },
+                            "&.Mui-selected .MuiListItemIcon-root": {
+                              color: "inherit",
+                            },
+                          }}
+                        >
+                          <ListItemIcon
+                            sx={{
+                              minWidth: 30,
+                              color: selected
+                                ? "inherit"
+                                : "text.secondary",
+                            }}
+                          >
+                            <Icon sx={{ fontSize: 17 }} />
+                          </ListItemIcon>
+
+                          <ListItemText
+                            primary={tool.name}
+                            slotProps={{
+                              primary: {
+                                sx: {
+                                  fontSize: 12.5,
+                                  fontWeight: selected ? 650 : 450,
+                                },
+                                noWrap: true,
+                              },
+                            }}
+                          />
+                        </ListItemButton>
+                      </Tooltip>
                     );
                   })}
-                </div>
+                </List>
               )}
-            </section>
+            </Box>
           );
         })}
 
         {filteredTools.length === 0 && (
-          <div className="empty-search">
-            <Search size={19} />
-            <span>No tools found</span>
-            <small>Try another keyword.</small>
-          </div>
+          <Typography
+            color="text.secondary"
+            variant="body2"
+            sx={{ px: 1.5, py: 2 }}
+          >
+            No tools found.
+          </Typography>
         )}
-      </nav>
+      </Box>
 
-      <div className="sidebar-footer">
-        <div className="footer-status">
-          <span className="status-dot" />
-          <span>All systems ready</span>
-        </div>
-        <div className="footer-meta">DEVPOCKET · VERSION 0.1.0</div>
-      </div>
-    </aside>
+      {/* Sidebar settings */}
+      <Divider />
+
+      <Box sx={{ p: 1.25 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            px: 1,
+            py: 0.5,
+            borderRadius: 2.5,
+            transition: "background-color 150ms ease",
+            "&:hover": { bgcolor: "action.hover" },
+          }}
+        >
+          <Settings
+            sx={{ fontSize: 19, color: "text.secondary" }}
+          />
+
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography sx={{ fontSize: 12.5, fontWeight: 600 }}>
+              Settings
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              Appearance
+            </Typography>
+          </Box>
+
+          <Tooltip
+            title={mode === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+          >
+            <IconButton
+              size="small"
+              onClick={onToggleTheme}
+              aria-label="Toggle theme"
+              sx={{
+                width: 34,
+                height: 34,
+                color: "text.secondary",
+                borderRadius: 2.5,
+              }}
+            >
+              {mode === "dark" ? (
+                <LightMode fontSize="small" />
+              ) : (
+                <DarkMode fontSize="small" />
+              )}
+            </IconButton>
+          </Tooltip>
+        </Box>
+      </Box>
+
+      <Box
+        sx={{
+          px: 2.25,
+          pb: 1.5,
+          pt: 0.25,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <Typography variant="caption" color="text.secondary">
+          Local utilities
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          v0.1.0
+        </Typography>
+      </Box>
+    </Box>
   );
 }

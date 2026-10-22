@@ -1,43 +1,31 @@
-export type ToolDefinition = {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  icon: string;
-};
+import { Numbers, DataObject } from "@mui/icons-material";
 
-export type ToolCategory = {
-  id: string;
-  name: string;
-  icon: string;
-};
-
-export const categories: ToolCategory[] = [
-  { id: "conversion", name: "Conversion", icon: "arrow-left-right" },
-  { id: "encoding", name: "Encoding", icon: "binary" },
-  { id: "formatting", name: "Formatting", icon: "braces" },
+export const categories = [
+  {
+    id: "converters",
+    name: "Converters",
+  },
+  {
+    id: "formatters",
+    name: "Formatters",
+  },
 ];
 
-export const tools: ToolDefinition[] = [
+export const tools = [
   {
     id: "decimal-hex",
     name: "Decimal ↔ Hex",
-    description: "Convert decimal numbers to hexadecimal and back.",
-    category: "conversion",
-    icon: "arrow-left-right",
-  },
-  {
-    id: "base64",
-    name: "Base64",
-    description: "Encode and decode Base64 strings.",
-    category: "encoding",
-    icon: "binary",
+    description: "Convert decimal integers and hexadecimal values.",
+    category: "converters",
+    icon: Numbers,
   },
   {
     id: "json-formatter",
     name: "JSON Formatter",
     description: "Format and inspect JSON data.",
-    category: "formatting",
-    icon: "braces",
+    category: "formatters",
+    icon: DataObject,
   },
-];
+] as const;
+
+export type ToolId = (typeof tools)[number]["id"];

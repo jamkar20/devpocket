@@ -1,25 +1,29 @@
-
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
-  Check,
-  Moon,
-  Sun,
-  Monitor,
-  Settings2,
-} from "lucide-react";
+  Box,
+  Typography,
+  Divider,
+  ThemeProvider,
+  CssBaseline,
+  Paper,
+} from "@mui/material";
 
 import Sidebar from "./components/Sidebar";
 import { tools } from "./data/tools";
+import { createAppTheme } from "./theme";
 import DecimalHexTool from "./tools/DecimalHexTool";
 
-type Theme = "dark" | "light";
+type ThemeMode = "dark" | "light";
 
-function getInitialTheme(): Theme {
+function getInitialTheme(): ThemeMode {
   try {
     const saved = localStorage.getItem("devpocket-theme");
-    if (saved === "light" || saved === "dark") return saved;
+
+    if (saved === "light" || saved === "dark") {
+      return saved;
+    }
   } catch {
-    // Use the default theme if storage is unavailable.
+    // Fall back to dark mode.
   }
 
   return "dark";
@@ -27,138 +31,140 @@ function getInitialTheme(): Theme {
 
 export default function App() {
   const [activeTool, setActiveTool] = useState("decimal-hex");
-  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+  const [mode, setMode] = useState<ThemeMode>(getInitialTheme);
 
-  const selectedTool = tools.find(
-    (tool) => tool.id === activeTool,
-  );
+  const theme = useMemo(() => createAppTheme(mode), [mode]);
+  const selectedTool = tools.find((tool) => tool.id === activeTool);
 
   useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-
     try {
-      localStorage.setItem("devpocket-theme", theme);
+      localStorage.setItem("devpocket-theme", mode);
     } catch {
-      // The current theme still works for this session.
+      // Theme remains available for this session.
     }
-  }, [theme]);
+  }, [mode]);
+
+  const toggleTheme = () => {
+    setMode((current) => (current === "dark" ? "light" : "dark"));
+  };
 
   return (
-    <div className="app-shell">
-      <Sidebar
-        activeTool={activeTool}
-        onSelectTool={setActiveTool}
-      />
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
 
-      <main className="main-content">
-        <header className="topbar">
-          <div className="breadcrumbs">
-            <span>Tools</span>
-            <span className="breadcrumb-separator">/</span>
-            <strong>{selectedTool?.name ?? "Workspace"}</strong>
-          </div>
+      <Box
+        className="app-shell"
+        sx={{
+          display: "flex",
+          width: "100%",
+          height: "100dvh",
+          minWidth: 800,
+          minHeight: 500,
+          overflow: "hidden",
+          bgcolor: "background.default",
+          color: "text.primary",
+        }}
+      >
+        <Sidebar
+          activeTool={activeTool}
+          onSelectTool={setActiveTool}
+          mode={mode}
+          onToggleTheme={toggleTheme}
+        />
 
-          <div className="topbar-actions">
-            <span className="runtime-status">
-              <span className="status-dot" />
-              Ready
-            </span>
+        <Box
+          component="main"
+          className="main-content"
+          sx={{
+            flex: 1,
+            minWidth: 0,
+            height: "100%",
+            overflow: "auto",
+          }}
+        >
+          <Box
+            className="content-area"
+            sx={{
+              width: "100%",
+              maxWidth: 1200,
+              mx: "auto",
+              px: { xs: 2.5, md: 4 },
+              py: { xs: 3, md: 4 },
+            }}
+          >
+            <Box sx={{ mb: 3.5 }}>
+              <Typography component="h1" variant="h1" sx={{ mb: 1 }}>
+                {selectedTool?.name ?? "Developer Tools"}
+              </Typography>
 
-            <div className="topbar-divider" />
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ lineHeight: 1.8, maxWidth: 680 }}
+              >
+                {selectedTool?.description ??
+                  "Small tools for everyday development tasks."}
+              </Typography>
+            </Box>
 
-            <button
-              type="button"
-              className="icon-button"
-              onClick={() =>
-                setTheme((current) =>
-                  current === "dark" ? "light" : "dark",
-                )
-              }
-              aria-label={
-                theme === "dark"
-                  ? "Switch to light theme"
-                  : "Switch to dark theme"
-              }
-              title={
-                theme === "dark"
-                  ? "Switch to light theme"
-                  : "Switch to dark theme"
-              }
+            <Paper
+              className="workspace-panel"
+              variant="outlined"
+              sx={{
+                overflow: "hidden",
+                borderColor: "divider",
+                bgcolor: "background.paper",
+                borderRadius: 4,
+              }}
             >
-              {theme === "dark" ? (
-                <Sun size={17} />
+              <Box
+                sx={{
+                  minHeight: 52,
+                  px: 2.5,
+                  py: 1.5,
+                  display: "flex",
+                  alignItems: "center",
+                  borderBottom: 1,
+                  borderColor: "divider",
+                }}
+              >
+                <Typography variant="subtitle2" sx={{ fontWeight: 650 }}>
+                  {selectedTool?.name ?? "Workspace"}
+                </Typography>
+              </Box>
+
+              {activeTool === "decimal-hex" ? (
+                <DecimalHexTool />
               ) : (
-                <Moon size={17} />
+                <Box
+                  sx={{
+                    minHeight: 280,
+                    p: 4,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    textAlign: "center",
+                    gap: 1,
+                  }}
+                >
+                  <Typography variant="h3">Coming soon</Typography>
+
+                  <Typography variant="body2" color="text.secondary">
+                    This tool will be implemented in a future update.
+                  </Typography>
+                </Box>
               )}
-            </button>
-          </div>
-        </header>
+            </Paper>
 
-        <div className="content-scroll">
-          <section className="content-area">
-            <div className="page-heading">
-              <div className="page-title-group">
-                <div className="eyebrow">DEVELOPER TOOLKIT</div>
-                <h1>{selectedTool?.name ?? "Developer Tools"}</h1>
-                <p>
-                  {selectedTool?.description ??
-                    "Small tools for everyday development tasks."}
-                </p>
-              </div>
+            <Divider sx={{ mt: 4, mb: 2, opacity: 0.6 }} />
 
-              <div className="page-actions">
-                <span className="tool-type">
-                  <Check size={13} />
-                  Local tool
-                </span>
-              </div>
-            </div>
-
-            <div className="workspace-panel">
-              <div className="panel-header">
-                <div>
-                  <h2>Workspace</h2>
-                  <p>
-                    {selectedTool?.description ??
-                      "Your selected tool is available here."}
-                  </p>
-                </div>
-
-                <Settings2
-                  size={17}
-                  className="panel-header-icon"
-                />
-              </div>
-
-              <div className="workspace-tool-content">
-                {activeTool === "decimal-hex" ? (
-                  <DecimalHexTool />
-                ) : (
-                  <div className="workspace-empty">
-                    <div className="empty-icon">
-                      <Monitor
-                        size={23}
-                        strokeWidth={1.6}
-                      />
-                    </div>
-
-                    <h3>Coming soon</h3>
-                    <p>
-                      This tool has not been implemented yet.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="bottom-note">
-              <span>DevPocket</span>
-              <span>•</span>
-              <span>Built for developers</span>
-            </div>
-          </section>
-        </div>
-      </main>
-    </div>
+            <Typography variant="caption" color="text.secondary">
+              DevPocket · Built for developers
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
+    </ThemeProvider>
   );
 }
