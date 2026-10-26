@@ -1,47 +1,19 @@
-# Neutralinojs + Vite + React + Typescript
-A simple [React](https://react.dev/) template for building [Neutralinojs](https://neutralino.js.org/) apps with [Vite](https://vitejs.dev/) as bundler and [Typescript](https://www.typescriptlang.org/)
+# README
 
-This package still uses **React SWC**. For a version using **React compiler** check out our other Template [Neutralino Vite React Compiler TS](https://github.com/Cloudwerk/neutralino-vite-react-compiler-ts)
+## About
 
-## How to set up
-### Prerequisites
-All prerequisites of Neutralino, Vite, React and Typescript apply. You should have Neutralinojs CLI installed.
-### Setup with Neutralino CLI
-Create a new Neutralinojs project with this template with the following command:
-1. `neu create myapp --template Cloudwerk/neutralinojs-vite-react-ts`
-2. `cd myapp`
-3. Create a `.env` file with the content `VITE_GLOBAL_URL=http://localhost:3000/`
-### Manual Setup (with Neutralino CLI)
-1. Clone this repository
-2. Adjust the `modes.window.title` and `cli.binaryName` to your desired Application Name inside the `neutralino.config.json` file
-3. Open a Terminal inside the repos root
-4. run `neu update`
-5. run `cd vite-src`
-6. Adjust the `name` property to your desired Application Name inside the `package.json` file
-7. Create a `.env` file with the content `VITE_GLOBAL_URL=http://localhost:3000/`
-8. run `npm install`
+This is the official Wails React-TS template.
 
-## Apps using this Template
-- [TTS WebUI Ignition](https://github.com/rsxdalv/tts-webui-ignition), Desktop App for TTS WebUI
+You can configure the project by editing `wails.json`. More information about the project settings can be found
+here: https://wails.io/docs/reference/project-config
 
-## Known Issues
-None :)
+## Live Development
 
-## How to develop
+To run in live development mode, run `wails dev` in the project directory. This will run a Vite development
+server that will provide very fast hot reload of your frontend changes. If you want to develop in a browser
+and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect
+to this in your browser, and you can call your Go code from devtools.
 
-Start the React development server and Neutralinojs app:
+## Building
 
-```bash
-neu run
-```
-
-## How to bundle the app
-
-Trigger a new React build and create the application bundle with the following command:
-```bash
-neu build
-```
-
-## License
-
-[MIT](LICENSE)
+To build a redistributable, production mode package, use `wails build`.

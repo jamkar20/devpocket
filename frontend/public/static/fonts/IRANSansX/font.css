@@ -1,0 +1,36 @@
+@font-face {
+ font-family:"IranSans";
+ src:url(./Light/IRANSansXFaNum-Light.woff2) format("woff2") ,
+ url(./Light/IRANSansXFaNum-Light.woff) format("woff") ,
+ url(./Light/IRANSansXFaNum-Light.ttf) format("truetype");
+ font-weight:300;
+ font-style:normal;
+ font-display:swap
+}
+@font-face {
+ font-family:"IranSans";
+ src:url(./Regular/IRANSansXFaNum-Regular.woff2) format("woff2") ,
+ url(./Regular/IRANSansXFaNum-Regular.woff) format("woff") ,
+ url(./Regular/IRANSansXFaNum-Regular.ttf) format("truetype");
+ font-weight:normal;
+ font-style:normal;
+ font-display:swap
+}
+@font-face {
+ font-family:"IranSans";
+ src:url(./Medium/IRANSansXFaNum-Medium.woff2) format("woff2") ,
+ url(./Medium/IRANSansXFaNum-Medium.woff) format("woff") ,
+ url(./Medium/TTF/IRANSansXFaNum-Medium.ttf) format("truetype");
+ font-weight:500;
+ font-style:normal;
+ font-display:swap
+}
+@font-face {
+ font-family:"IranSans";
+ src:url(./Bold/IRANSansXFaNum-Bold.woff2) format("woff2") ,
+ url(./Bold/IRANSansXFaNum-Bold.woff) format("woff") ,
+ url(./Bold/TTF/IRANSansXFaNum-Bold.ttf) format("truetype");
+ font-weight:600;
+ font-style:normal;
+ font-display:swap
+}
