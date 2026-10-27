@@ -2,11 +2,16 @@ package main
 
 import (
 	"context"
+
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
-// App struct
-type App struct {
-	ctx context.Context
+type MainService struct {
+	app *application.App
+}
+
+func NewMainService(app *application.App) *MainService {
+	return &MainService{app: app}
 }
 
 type DesktopInfo struct {
@@ -14,20 +19,14 @@ type DesktopInfo struct {
 	Version string `json:"version"`
 }
 
-// NewApp creates a new App application struct
-func NewApp() *App {
-	return &App{}
+func (s *MainService) ServiceStartup(ctx context.Context, options application.ServiceOptions) error {
+	// Initialisation
+	return nil
 }
 
-// startup is called when the app starts. The context is saved
-// so we can call the runtime methods
-func (a *App) startup(ctx context.Context) {
-	a.ctx = ctx
-}
-
-func (a *App) GetInfo() DesktopInfo {
+func (a *MainService) GetInfo() DesktopInfo {
 	return DesktopInfo{
 		Name:    "DevPocket",
-		Version: "0.1.0",
+		Version: "0.2.0",
 	}
 }

@@ -1,10 +1,7 @@
-export interface DesktopInfo {
-  name: string;
-  version: string;
-}
+import { MainService, DesktopInfo } from "../../bindings/DevPocket";
+
+export { DesktopInfo } from "../../bindings/DevPocket";
 
 export async function getDesktopInfo(): Promise<DesktopInfo> {
-  const { GetInfo } = await import("../../wailsjs/go/main/App");
-
-  return GetInfo();
+  return MainService.GetInfo();
 }
