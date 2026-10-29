@@ -27,6 +27,6 @@ func (s *MainService) ServiceStartup(ctx context.Context, options application.Se
 func (a *MainService) GetInfo() DesktopInfo {
 	return DesktopInfo{
 		Name:    "DevPocket",
-		Version: "0.2.0",
+		Version: "0.3.0",
 	}
 }
