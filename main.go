@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 
+	"github.com/kbinani/screenshot"
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
@@ -10,7 +11,6 @@ import (
 var assets embed.FS
 
 func main() {
-	// Create an instance of the app structure
 	app := application.New(application.Options{
 		Name: "DevPocket",
 		Assets: application.AssetOptions{
@@ -21,15 +21,23 @@ func main() {
 
 	app.RegisterService(application.NewService(NewMainService(app)))
 
+	// Get the primary display dimensions.
+	bounds := screenshot.GetDisplayBounds(0)
+
+	// Set the initial window size to 60% of the display.
+	width := bounds.Dx() * 60 / 100
+	height := bounds.Dy() * 80 / 100
+
 	app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title:            "DevPocket",
-		MinWidth:         850,
-		MinHeight:        650,
+		Width:            width,
+		Height:           height,
+		MinWidth:         800,
+		MinHeight:        600,
 		BackgroundColour: application.NewRGBA(27, 38, 54, 1),
 	})
 
-	err := app.Run()
-	if err != nil {
+	if err := app.Run(); err != nil {
 		panic(err)
 	}
 }
