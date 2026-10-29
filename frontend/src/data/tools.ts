@@ -6,6 +6,7 @@ import {
   VpnKeyRounded,
   EnhancedEncryptionRounded,
   TransformRounded,
+  TagRounded,
 } from "@mui/icons-material";
 
 export const categories = [
@@ -177,6 +178,15 @@ export const tools = [
       "security",
       "verification code",
     ],
+  },
+
+  {
+    id: "hash",
+    name: "Hash Generator",
+    description: "Generate MD5 and SHA hashes from text or files.",
+    category: "encoders-decoders",
+    icon: TagRounded,
+    tags: ["hash", "md5", "sha1", "sha256", "sha512", "checksum"],
   },
 ] as const;
 

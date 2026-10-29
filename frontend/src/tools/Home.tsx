@@ -1,13 +1,8 @@
 import {
   Box,
   Typography,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
   Divider,
 } from "@mui/material";
-import { ArrowForwardIosRounded } from "@mui/icons-material";
 
 import { categories, tools, type ToolId } from "../data/tools";
 
