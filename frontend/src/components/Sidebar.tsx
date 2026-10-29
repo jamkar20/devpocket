@@ -27,17 +27,17 @@ import {
   Search,
   KeyboardArrowDown,
   KeyboardArrowRight,
-  Terminal,
   Settings,
   DarkMode,
   LightMode,
   Close,
-  Language,
   Palette,
+  HomeRounded,
 } from "@mui/icons-material";
 
 import { categories, tools, type ToolId } from "../data/tools";
 import { DesktopInfo } from "../services/desktop";
+import logo from "../assets/logo.png";
 
 type ThemeMode = "dark" | "light";
 type AppLanguage = "en" | "fa";
@@ -63,10 +63,7 @@ export default function Sidebar({
 }: SidebarProps) {
   const [search, setSearch] = useState("");
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [expanded, setExpanded] = useState<string[]>([
-    "converters",
-    "formatters",
-  ]);
+  const [expanded, setExpanded] = useState<string[]>([]);
 
   const filteredTools = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -136,12 +133,14 @@ export default function Sidebar({
                 display: "grid",
                 placeItems: "center",
                 borderRadius: 2.5,
-                bgcolor: "primary.main",
-                color: "primary.contrastText",
                 flexShrink: 0,
               }}
             >
-              <Terminal fontSize="small" />
+              <img
+                src={logo}
+                alt="logo"
+                style={{ width: "100%", height: "100%" }}
+              />
             </Box>
 
             <Box sx={{ minWidth: 0 }}>
@@ -187,6 +186,46 @@ export default function Sidebar({
               },
             }}
           />
+        </Box>
+
+        <Divider />
+
+        {/* Home navigation */}
+        <Box sx={{ px: 1, pt: 1.25, pb: 1 }}>
+          <ListItemButton
+            selected={activeTool === "home"}
+            onClick={() => onSelectTool("home")}
+            sx={{
+              minHeight: 40,
+              px: 1.25,
+              borderRadius: 2.5,
+              "&.Mui-selected": {
+                bgcolor: "action.selected",
+                color: "primary.main",
+              },
+              "&.Mui-selected .MuiListItemIcon-root": {
+                color: "primary.main",
+              },
+            }}
+          >
+            <ListItemIcon
+              sx={{
+                minWidth: 34,
+                color: "text.secondary",
+              }}
+            >
+              <HomeRounded fontSize="small" />
+            </ListItemIcon>
+
+            <ListItemText
+              primary="Home"
+              slotProps={{
+                primary: {
+                  sx: { fontSize: 12.5, fontWeight: 650 },
+                },
+              }}
+            />
+          </ListItemButton>
         </Box>
 
         <Divider />
@@ -485,17 +524,6 @@ export default function Sidebar({
 
             {/* Language */}
             <Box>
-              <Stack
-                direction="row"
-                spacing={1}
-                sx={{ mb: 1.25, alignItems: "center" }}
-              >
-                <Language fontSize="small" color="action" />
-                <Typography variant="subtitle2" sx={{ fontWeight: 650 }}>
-                  Language
-                </Typography>
-              </Stack>
-
               <FormControl fullWidth size="small">
                 <InputLabel id="settings-language-label">
                   Interface language
@@ -512,18 +540,12 @@ export default function Sidebar({
                   <MenuItem value="en">
                     <Box>
                       <Typography variant="body2">English</Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        Left to right (LTR)
-                      </Typography>
                     </Box>
                   </MenuItem>
 
                   <MenuItem value="fa">
                     <Box>
                       <Typography variant="body2">فارسی</Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        راست‌چین (RTL)
-                      </Typography>
                     </Box>
                   </MenuItem>
                 </Select>

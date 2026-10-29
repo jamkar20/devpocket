@@ -1,11 +1,5 @@
-
 import { useEffect, useMemo, useState } from "react";
-import {
-  Box,
-  Typography,
-  ThemeProvider,
-  CssBaseline,
-} from "@mui/material";
+import { Box, Typography, ThemeProvider, CssBaseline } from "@mui/material";
 
 import Sidebar from "./components/Sidebar";
 import ToolRenderer from "./components/ToolRenderer";
@@ -15,12 +9,12 @@ import { createAppTheme } from "./theme";
 import { getDesktopInfo, type DesktopInfo } from "./services/desktop";
 import "./i18n";
 import { ToolFeedbackProvider } from "./components/tool-ui/ToolFeedbackProvider";
+import Home from "./tools/Home";
 
 type ThemeMode = "dark" | "light";
 type Language = "en" | "fa";
 
 const THEME_STORAGE_KEY = "devpocket-theme";
-const DEFAULT_TOOL_ID = "decimal-hex";
 
 function getInitialTheme(): ThemeMode {
   try {
@@ -37,7 +31,7 @@ function getInitialTheme(): ThemeMode {
 }
 
 export default function App() {
-  const [activeTool, setActiveTool] = useState(DEFAULT_TOOL_ID);
+  const [activeTool, setActiveTool] = useState("home");
   const [mode, setMode] = useState<ThemeMode>(getInitialTheme);
   const [language, setLanguage] = useState<Language>("en");
   const [desktopInfo, setDesktopInfo] = useState<DesktopInfo>();
@@ -144,19 +138,20 @@ export default function App() {
                       lineHeight: 1.3,
                     }}
                   >
-                    {selectedTool?.name ?? "Developer Tools"}
+                    {activeTool === "home"
+                      ? "Home"
+                      : (selectedTool?.name ?? "Developer Tools")}
                   </Typography>
 
                   <Typography
                     variant="body2"
                     color="text.secondary"
-                    sx={{
-                      lineHeight: 1.6,
-                      maxWidth: 680,
-                    }}
+                    sx={{ lineHeight: 1.6, maxWidth: 680 }}
                   >
-                    {selectedTool?.description ??
-                      "Small tools for everyday development tasks."}
+                    {activeTool === "home"
+                      ? "Browse your developer tools by category."
+                      : (selectedTool?.description ??
+                        "Small tools for everyday development tasks.")}
                   </Typography>
                 </Box>
 
@@ -168,7 +163,11 @@ export default function App() {
                     width: "100%",
                   }}
                 >
-                  <ToolRenderer toolId={activeTool} />
+                  {activeTool === "home" ? (
+                    <Home onSelectTool={setActiveTool} />
+                  ) : (
+                    <ToolRenderer toolId={activeTool} />
+                  )}
                 </Box>
               </Box>
             </Box>
