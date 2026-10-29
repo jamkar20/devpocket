@@ -8,6 +8,7 @@ import RsaTool from "../tools/RsaTool";
 import ColorConverter from "../tools/ColorConverter";
 import GuidGenerator from "../tools/GuidGenerator";
 import OtpGenerator from "../tools/OtpGenerator";
+import HashTool from "../tools/HashTool";
 
 interface ToolRendererProps {
   toolId: string;
@@ -58,6 +59,9 @@ export default function ToolRenderer({ toolId }: ToolRendererProps) {
 
     case "otp-generator":
       return <OtpGenerator />;
+
+    case "hash":
+      return <HashTool />;
 
     default:
       return <ComingSoon />;
